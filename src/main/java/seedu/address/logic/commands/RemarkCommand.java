@@ -7,10 +7,13 @@ import seedu.address.model.Model;
 //import seedu.address.model.person.Person;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_REMARK;
 //import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
-import static seedu.address.logic.parser.CliSyntax.*;
 //import static seedu.address.logic.parser.CliSyntax.PREFIX_REMARK;
 
+/**
+ * Edits the remark for a person specified by the INDEX
+ */
 public class RemarkCommand extends Command {
 
     public static final String COMMAND_WORD = "remark";
@@ -31,8 +34,8 @@ public class RemarkCommand extends Command {
     public RemarkCommand(Index targetIndex, String remark) {
         requireNonNull(targetIndex, remark);
 
-            this.targetIndex = targetIndex;
-            this.remark = remark;
+        this.targetIndex = targetIndex;
+        this.remark = remark;
     }
 
     @Override
