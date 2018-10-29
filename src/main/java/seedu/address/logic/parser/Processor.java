@@ -11,13 +11,13 @@ import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT
  */
 public class Processor {
 
-/*
+    /*
     String userInput;
 
     public Processor(String userInput) {
         this.userInput = userInput;
    }
-*/
+    */
 
     /**
      * Adds the string tokens in sortedArray into a single string, ignoring null entries in the array
@@ -34,8 +34,9 @@ public class Processor {
         StringBuilder out = new StringBuilder();
         out.append(s[0]);
         for (int i = 1; i < k; i++) {
-            if (s[i] != null)
+            if (s[i] != null) {
                 out.append(glue).append(s[i]);
+            }
         }
         return out.toString();
     }
@@ -56,6 +57,12 @@ public class Processor {
         return true;
     }
 
+    /**
+     * Sorts the tokens in args[] into the correct sequence and concatenates them into a string
+     * @param userInput the line input by user
+     * @return the sorted string
+     * @throws ParseException
+     */
     public String commandParser(String userInput) throws ParseException {
         String[] args = userInput.split(" ");
         String sortedInput;
