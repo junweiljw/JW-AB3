@@ -1,4 +1,4 @@
-= AddressBook Level 4 - Developer Guide
+= JitHub - Developer Guide
 :site-section: DeveloperGuide
 :toc:
 :toc-title:
@@ -14,7 +14,7 @@ ifdef::env-github[]
 endif::[]
 :repoURL: https://github.com/CS2113-AY1819S1-W12-1/main
 
-By: `Team SE-EDU`      Since: `Jun 2016`      Licence: `MIT`
+By: `CS2113-AY1819S1-W12-1`      Since: `Aug 2018`
 
 == Setting up
 
@@ -319,6 +319,90 @@ image::UndoRedoActivityDiagram.png[width="650"]
 ** Pros: We do not need to maintain a separate list, and just reuse what is already in the codebase.
 ** Cons: Requires dealing with commands that have already been undone: We must remember to skip these commands. Violates Single Responsibility Principle and Separation of Concerns as `HistoryManager` now needs to do two different things.
 // end::undoredo[]
+
+// tag::exportall[]
+=== ExportAll Feature
+==== Current Implementation
+
+The exportall mechanism is facilitated by `CsvWriter`. Internally, a CSVWriter object from the http://opencsv.sourceforge.net/[OpenCSV]
+library is instantiated to write all persons to the default file path `/data/pineapple.csv`. Currently, it implements
+ the following operation(s):
+
+* `CsvWriter#write()` -- Writes the name, phone, address, and email of all persons in the current address book to
+`/data/pineapple.csv`, and overwrites the file if an older version is available.
+
+This operation is exposed in the `Model` interface as `Model#exportAddressBook()`.
+
+Given below is an example usage scenario and how the exportall mechanism behaves at each step.
+
+Step 1. The user calls the exportall command with `exportall csv`.
+
+Step 2. The LogicManager calls parseCommand with the user input.
+
+Step 3. The AddressBookParser is called and it returns a ExportAllCommand object to LogicManager.
+
+Step 4. The LogicManager calls execute() on the ExportAllCommand object
+
+Step 5. The Logic component then interacts with the Model component by calling `exportAddressBook()` of the Model
+interface.
+
+Step 6. The Model interface creates a new CsvWriter object and invokes the method `write()`.
+
+Step 7. The CsvWriter writes the data to the defined file path.
+
+[NOTE]
+The file path is defined in `outputFilepath`, and is hardcoded as `/data/pineapple.csv` for now.
+
+[NOTE]
+Any existing file named as `pineapple.csv` at the defined path will be overwritten.
+
+The following sequence diagram shows how the ExportAll operation works:
+
+image::ExportAllSequenceDiagram.png[width="800"]
+
+// The following activity diagram summarizes what happens when `CsvWriter#write()` is called:
+// TODO: show the if condition for file exists and not exists
+// image::UndoRedoActivityDiagram.png[width="650"]
+
+// TODO: implementation details of write()
+==== write()
+Given below is the algorithm behind the write() method used in the `ExportAll` Command:
+
+Step 1. Instantiate an OpenCSV writer.
+
+Step 2. Write the header to the csv file.
+
+Step 3. Declare a `List<String[]> data`.
+
+Step 4. Loop through an
+https://docs.oracle.com/javase/8/javafx/api/javafx/collections/ObservableList.html[`ObservableList<Person>`]
+containing all persons in the AddressBook and push `String[] personDetails` to `data`.
+
+    // Generates a string array for each person and stores the details
+    String[] personDetails = new String[header.length];
+    personDetails[INDEX_PERSON_NAME] = person.getName().toString();
+    personDetails[INDEX_PERSON_PHONE] = person.getPhone().toString();
+    personDetails[INDEX_PERSON_ADDRESS] = person.getAddress().toString();
+    personDetails[INDEX_PERSON_EMAIL] = person.getEmail().toString();
+
+Step 5. Write `data` to the csv file.
+
+Step 6. Close the OpenCSV writer.
+
+==== Design Considerations
+
+===== Aspect: How data in the AddressBook is passed into the CsvWriter object
+
+* **Alternative 1 (current choice):** `ObservableList<Person>`
+** Pros: Easy to implement since `getFilteredPersonList()` is already implemented.
+** Cons: We must ensure that the implementation of each individual command are correct.
+* **Alternative 2:** `versionedAddressBook`
+** Pros: Looks more direct since the whole AddressBook is passed into the `CsvWriter`.
+** Cons: Hard to write tests and requires more methods to process the data.
+
+* **Solution**: The data is passed into the `CsvWriter` object through its constructor as an `ObservableList<Person>`.
+
+// tag::exportall[]
 
 // tag::dataencryption[]
 === [Proposed] Data Encryption
@@ -847,10 +931,59 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 _{More to be added}_
 
+Additional user stories:
+[width="59%",cols="22%,<23%,<25%,<30%",options="header",]
+|===========================================================================================================================================
+|Priority |As a/an ... |I want to ... |So that I can...
+|`* * *` |student who interacts with a lot of people |export my contacts |share/print them
+
+|`* * *` |student with different group projects |group my contacts into different categories |I can send out messages to different project groups
+
+|`* * *` |team leader of a group project |save the timetable of my project group mates |find potential time slot for
+meetings
+
+|`* * *` |user who is concerned about security |hide some/all of my contacts with a password |people cannot see them without my permission.
+
+|`* *` |extensive CLI user|have autocomplete function |accomplish my command line input faster
+
+|`* *` |user who is always meeting new people |add a new person through QR code |do not have to key in new contact
+details manually
+
+|`*` |user who is new to CLI |have a natural language-like CLI |I can pick up how to use CLI faster
+|===========================================================================================================================================
+
 [appendix]
 == Use Cases
 
 (For all use cases below, the *System* is the `AddressBook` and the *Actor* is the `user`, unless specified otherwise)
+
+[discrete]
+=== Use case: Add schedule
+
+*MSS*
+
+1.  User requests to add personal schedule.
+2.  User adds in non-available time slots with event tag.
+3.  Jithub shows user available time slots.
+4.  User selects a group of persons.
+5.  Jithub shows the common available time slots among all selected persons.
++
+Use Case ends.
+
+*Extensions*
+
+* 2a. User requests to delete added schedule.
++
+Use case resumes at step 3.
+
+* 2a. User does not add anything.
++
+Use case resumes at step 3.
+
+* 5a. No common time slots available.
++
+Use Case ends.
+
 
 [discrete]
 === Use case: Delete person
@@ -858,9 +991,9 @@ _{More to be added}_
 *MSS*
 
 1.  User requests to list persons
-2.  AddressBook shows a list of persons
+2.  Jithub shows a list of persons
 3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+4.  Jithub deletes the person
 +
 Use case ends.
 
@@ -880,12 +1013,46 @@ Use case resumes at step 2.
 
 _{More to be added}_
 
+[discrete]
+=== Use case: Export contacts
+
+*MSS*
+
+. User requests to export contacts.
+. AddressBook shows a list of persons and prompts user to select contacts to export.
+. User chooses contacts with specific tags in the list to export.
+. AddressBook prompts user for the filename and format (csv/vcf) of the output file.
+. User chooses a filename and format.
+. AddressBook generates the output file.
++
+Use case ends.
+
+*Extensions*
+
+* 2a. The list is empty.
++
+Use case ends.
+
+* 3a. The given index is invalid.
+** 3a1. AddressBook shows an error message.
++
+Use case resumes at step 2.
+
+* 5a. The given format is invalid.
+** 3a1. AddressBook shows an error message.
++
+Use case resumes at step 4.
+
 [appendix]
 == Non Functional Requirements
 
 .  Should work on any <<mainstream-os,mainstream OS>> as long as it has Java `9` or higher installed.
 .  Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
 .  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+.  Should come with automated unit tests and open source code.
+.  Should work on both 32-bit and 64-bit environments.
+.  Should not exceed 100MB in size.
+.  Should not use any words deemed offensive to English speakers.
 
 _{More to be added}_
 
