@@ -58,19 +58,18 @@ public class Processor {
 
     public String commandParser(String userInput) throws ParseException {
         String[] args = userInput.split(" ");
-        final String sortedInput;
-        final String[] sortedArray = new String[10];
+        String sortedInput;
+        String[] sortedArray = new String[10];
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
 
-                // fallthrough, similar "COMMAND_WORD + PREFIX + DATA" argument pattern
+                // "COMMAND_WORD + PREFIX + DATA" argument pattern
                 case AddCommand.COMMAND_WORD:
-                case EditCommand.COMMAND_WORD:
                     sortedArray[0] = args[i];
-                    int k = 5;
+                    int tagIndex = 5;
 
-                    for (int j = 0; (j < args.length) && (j != i); j++) {
+                    for (int j = 0; j < args.length; j++) {
                         if (args[j].startsWith("n/")) {
                             sortedArray[1] = args[j];
                         } else if (args[j].startsWith("p/")) {
@@ -80,7 +79,29 @@ public class Processor {
                         } else if (args[j].startsWith("a/")) {
                             sortedArray[4] = args[j];
                         } else if (args[j].startsWith("t/")) {
-                            sortedArray[k++] = args[j];
+                            sortedArray[tagIndex++] = args[j];
+                        }
+                    }
+                    sortedInput = combine(sortedArray, " ");
+                    return sortedInput;
+
+                // "COMMAND_WORD + INDEX + PREFIX + DATA" argument pattern
+                case EditCommand.COMMAND_WORD:
+                    tagIndex = 6;
+
+                    for (int j = 0; j < args.length; j++) {
+                        if (isInteger(args[j])) {
+                            sortedArray[1] = args[j];
+                        } else if (args[j].startsWith("n/")) {
+                            sortedArray[2] = args[j];
+                        } else if (args[j].startsWith("p/")) {
+                            sortedArray[3] = args[j];
+                        } else if (args[j].startsWith("e/")) {
+                            sortedArray[4] = args[j];
+                        } else if (args[j].startsWith("a/")) {
+                            sortedArray[5] = args[j];
+                        } else if (args[j].startsWith("t/")) {
+                            sortedArray[tagIndex++] = args[j];
                         }
                     }
                     sortedInput = combine(sortedArray, " ");
@@ -92,7 +113,7 @@ public class Processor {
                     sortedArray[0] = args[i];
                     int intIndex = 1;
 
-                    for (int j = 0; (j < args.length) && (j != i); j++) {
+                    for (int j = 0; j < args.length; j++) {
                         if (isInteger(args[j])) {
                             sortedArray[intIndex++] = args[j];
                         }
@@ -103,7 +124,7 @@ public class Processor {
                 case FindCommand.COMMAND_WORD:
                     sortedArray[0] = args[i];
                     int keywordIndex = 1;
-                    for (int j = 0; (j < args.length) && (j != i); j++) {
+                    for (int j = 0; j < args.length; j++) {
                         sortedArray[keywordIndex++] = args[j];
                     }
                     sortedInput = combine(sortedArray, " ");
