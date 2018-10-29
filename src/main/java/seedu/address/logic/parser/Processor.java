@@ -64,85 +64,85 @@ public class Processor {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
 
-                // "COMMAND_WORD + PREFIX + DATA" argument pattern
-                case AddCommand.COMMAND_WORD:
-                    sortedArray[0] = args[i];
-                    int tagIndex = 5;
+            // "COMMAND_WORD + PREFIX + DATA" argument pattern
+            case AddCommand.COMMAND_WORD:
+                sortedArray[0] = args[i];
+                int tagIndex = 5;
 
-                    for (int j = 0; j < args.length; j++) {
-                        if (args[j].startsWith("n/")) {
-                            sortedArray[1] = args[j];
-                        } else if (args[j].startsWith("p/")) {
-                            sortedArray[2] = args[j];
-                        } else if (args[j].startsWith("e/")) {
-                            sortedArray[3] = args[j];
-                        } else if (args[j].startsWith("a/")) {
-                            sortedArray[4] = args[j];
-                        } else if (args[j].startsWith("t/")) {
-                            sortedArray[tagIndex++] = args[j];
-                        }
+                for (int j = 0; j < args.length; j++) {
+                    if (args[j].startsWith("n/")) {
+                        sortedArray[1] = args[j];
+                    } else if (args[j].startsWith("p/")) {
+                        sortedArray[2] = args[j];
+                    } else if (args[j].startsWith("e/")) {
+                        sortedArray[3] = args[j];
+                    } else if (args[j].startsWith("a/")) {
+                        sortedArray[4] = args[j];
+                    } else if (args[j].startsWith("t/")) {
+                        sortedArray[tagIndex++] = args[j];
                     }
-                    sortedInput = combine(sortedArray, " ");
-                    return sortedInput;
+                }
+                sortedInput = combine(sortedArray, " ");
+                return sortedInput;
 
-                // "COMMAND_WORD + INDEX + PREFIX + DATA" argument pattern
-                case EditCommand.COMMAND_WORD:
-                    tagIndex = 6;
+            // "COMMAND_WORD + INDEX + PREFIX + DATA" argument pattern
+            case EditCommand.COMMAND_WORD:
+                tagIndex = 6;
 
-                    for (int j = 0; j < args.length; j++) {
-                        if (isInteger(args[j])) {
-                            sortedArray[1] = args[j];
-                        } else if (args[j].startsWith("n/")) {
-                            sortedArray[2] = args[j];
-                        } else if (args[j].startsWith("p/")) {
-                            sortedArray[3] = args[j];
-                        } else if (args[j].startsWith("e/")) {
-                            sortedArray[4] = args[j];
-                        } else if (args[j].startsWith("a/")) {
-                            sortedArray[5] = args[j];
-                        } else if (args[j].startsWith("t/")) {
-                            sortedArray[tagIndex++] = args[j];
-                        }
+                for (int j = 0; j < args.length; j++) {
+                    if (isInteger(args[j])) {
+                        sortedArray[1] = args[j];
+                    } else if (args[j].startsWith("n/")) {
+                        sortedArray[2] = args[j];
+                    } else if (args[j].startsWith("p/")) {
+                        sortedArray[3] = args[j];
+                    } else if (args[j].startsWith("e/")) {
+                        sortedArray[4] = args[j];
+                    } else if (args[j].startsWith("a/")) {
+                        sortedArray[5] = args[j];
+                    } else if (args[j].startsWith("t/")) {
+                        sortedArray[tagIndex++] = args[j];
                     }
-                    sortedInput = combine(sortedArray, " ");
-                    return sortedInput;
+                }
+                sortedInput = combine(sortedArray, " ");
+                return sortedInput;
 
-                //fallthrough, similar "COMMAND_WORD + INDEX" argument pattern
-                case SelectCommand.COMMAND_WORD:
-                case DeleteCommand.COMMAND_WORD:
-                    sortedArray[0] = args[i];
-                    int intIndex = 1;
+            //fallthrough, similar "COMMAND_WORD + INDEX" argument pattern
+            case SelectCommand.COMMAND_WORD:
+            case DeleteCommand.COMMAND_WORD:
+                sortedArray[0] = args[i];
+                int intIndex = 1;
 
-                    for (int j = 0; j < args.length; j++) {
-                        if (isInteger(args[j])) {
-                            sortedArray[intIndex++] = args[j];
-                        }
+                for (int j = 0; j < args.length; j++) {
+                    if (isInteger(args[j])) {
+                        sortedArray[intIndex++] = args[j];
                     }
-                    sortedInput = combine(sortedArray, " ");
-                    return sortedInput;
+                }
+                sortedInput = combine(sortedArray, " ");
+                return sortedInput;
 
-                case FindCommand.COMMAND_WORD:
-                    sortedArray[0] = args[i];
-                    int keywordIndex = 1;
-                    for (int j = 0; j < args.length; j++) {
-                        sortedArray[keywordIndex++] = args[j];
-                    }
-                    sortedInput = combine(sortedArray, " ");
-                    return sortedInput;
+            case FindCommand.COMMAND_WORD:
+                sortedArray[0] = args[i];
+                int keywordIndex = 1;
+                for (int j = 0; j < args.length; j++) {
+                    sortedArray[keywordIndex++] = args[j];
+                }
+                sortedInput = combine(sortedArray, " ");
+                return sortedInput;
 
-                // fallthrough, similar "COMMAND_WORD" argument pattern
-                case ClearCommand.COMMAND_WORD:
-                case ListCommand.COMMAND_WORD:
-                case HistoryCommand.COMMAND_WORD:
-                case UndoCommand.COMMAND_WORD:
-                case RedoCommand.COMMAND_WORD:
-                case HelpCommand.COMMAND_WORD:
-                case ExitCommand.COMMAND_WORD:
-                    sortedArray[0] = args[i];
-                    sortedInput = combine(sortedArray, " ");
-                    return sortedInput;
+            // fallthrough, similar "COMMAND_WORD" argument pattern
+            case ClearCommand.COMMAND_WORD:
+            case ListCommand.COMMAND_WORD:
+            case HistoryCommand.COMMAND_WORD:
+            case UndoCommand.COMMAND_WORD:
+            case RedoCommand.COMMAND_WORD:
+            case HelpCommand.COMMAND_WORD:
+            case ExitCommand.COMMAND_WORD:
+                sortedArray[0] = args[i];
+                sortedInput = combine(sortedArray, " ");
+                return sortedInput;
 
-                default:
+            default:
             }
         }
         throw new ParseException(MESSAGE_INVALID_COMMAND_FORMAT);
