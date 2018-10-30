@@ -75,11 +75,14 @@ public class Processor {
      * @throws ParseException
      */
     public String commandParser(String userInput) throws ParseException {
+
+        // splits userInput by whitespaces and saves the tokens in args[]
         String[] args = userInput.split(" ", 0);
         String targetIndex = null;
         String sortedInput;
         String[] sortedArray = new String[10];
 
+        // identifies the first instance of an integer and saves it as the targetIndex (assuming that the first integer is the index)
         for (int i = 0; i < args.length; i++) {
             if (isInteger(args[i])) {
                 targetIndex = args[i];
@@ -89,14 +92,20 @@ public class Processor {
 
             // "COMMAND_WORD + PREFIX + DATA" argument pattern
             case AddCommand.COMMAND_WORD:
+                // replaces the COMMAND_WORD in the userInput string with an empty string
                 userInput.replace(args[i], "");
+                // splits the remaining userInput by "/" and savs the tokens in a prefixArguments[]
                 String[] prefixArguments = userInput.split("/", 0);
                 int tagIndex = 5;
+                // first index of the array will be command, to be recognised by addressbookParser
                 sortedArray[0] = args[i];
                 for (int j = 0; j < prefixArguments.length; j++) {
+                    // assigns the last character of each token as the prefix, since it was tokenized by "/"
                     String prefix = prefixArguments[j].substring(prefixArguments[j].length()-1);
                     switch (prefix) {
                     case ("n"):
+                        // j+1 because the prefix belongs to the next token, meaning the arguments are in the next index
+                        // removes the last 2 characters of each string in the prefixArguments array, which is a whitespace + prefix
                         sortedArray[1] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
                     case ("p"):
                         sortedArray[2] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
@@ -109,6 +118,7 @@ public class Processor {
                     default:
                     }
                 }
+                // concatenates the strings in sortedArray, ignoring null entries (missing parameters)
                 sortedInput = combine(sortedArray, " ");
                 return sortedInput;
 
@@ -170,6 +180,7 @@ public class Processor {
             default:
             }
         }
+        // if this statement is reached, there is no COMMAND_WORD within the userInput string
         throw new ParseException(MESSAGE_INVALID_COMMAND_FORMAT);
     }
 }
