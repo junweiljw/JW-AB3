@@ -85,7 +85,8 @@ public class Processor {
         int tagIndex;
         String argument;
 
-        // identifies the first instance of an integer and saves it as the targetIndex (assuming that the first integer is the index)
+        // identifies the first instance of an integer and saves it as the targetIndex (assuming that the first integer
+        // is the index)
         for (int i = 0; i < args.length; i++) {
             if (isInteger(args[i])) {
                 targetIndex = args[i];
@@ -106,16 +107,17 @@ public class Processor {
                 sortedArray[0] = args[i];
                 for (int j = 0; j < (prefixArguments.length - 1); j++) {
                     // assigns the last character of each token as the prefix, since it was tokenized by "/"
-                    String prefix = prefixArguments[j].substring(prefixArguments[j].length()-1);
+                    String prefix = prefixArguments[j].substring(prefixArguments[j].length() - 1);
                     if (j == (prefixArguments.length - 2)) {
-                        argument = prefixArguments[j+1];
+                        argument = prefixArguments[j + 1];
                     } else {
-                        argument = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                        // removes the last 2 characters of each string in the prefixArguments array, which is a
+                        // whitespace + prefix
+                        argument = prefixArguments[j + 1].substring(0, prefixArguments[j + 1].length() - 2);
                     }
                     switch (prefix) {
                     case ("n"):
                         // j+1 because the prefix belongs to the next token, meaning the arguments are in the next index
-                        // removes the last 2 characters of each string in the prefixArguments array, which is a whitespace + prefix
                         sortedArray[1] = "n/" + argument;
                         break;
                     case ("p"):
@@ -147,9 +149,9 @@ public class Processor {
                 for (int j = 0; j < (prefixArguments.length - 1); j++) {
                     String prefix = prefixArguments[j].substring(prefixArguments[j].length()-1);
                     if (j == (prefixArguments.length - 2)) {
-                        argument = prefixArguments[j+1];
+                        argument = prefixArguments[j + 1];
                     } else {
-                        argument = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                        argument = prefixArguments[j + 1].substring(0, prefixArguments[j + 1].length() - 2);
                     }
                     switch (prefix) {
                     case ("n"):
