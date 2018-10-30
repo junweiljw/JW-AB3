@@ -75,29 +75,38 @@ public class Processor {
      * @throws ParseException
      */
     public String commandParser(String userInput) throws ParseException {
-        String[] args = userInput.split(" ");
+        String[] args = userInput.split(" ", 0);
+        String targetIndex = null;
         String sortedInput;
         String[] sortedArray = new String[10];
 
         for (int i = 0; i < args.length; i++) {
+            if (isInteger(args[i])) {
+                targetIndex = args[i];
+            }
+
             switch (args[i]) {
 
             // "COMMAND_WORD + PREFIX + DATA" argument pattern
             case AddCommand.COMMAND_WORD:
-                sortedArray[0] = args[i];
+                userInput.replace(args[i], "");
+                String[] prefixArguments = userInput.split("/", 0);
                 int tagIndex = 5;
-
-                for (int j = 0; j < args.length; j++) {
-                    if (args[j].startsWith("n/")) {
-                        sortedArray[1] = args[j];
-                    } else if (args[j].startsWith("p/")) {
-                        sortedArray[2] = args[j];
-                    } else if (args[j].startsWith("e/")) {
-                        sortedArray[3] = args[j];
-                    } else if (args[j].startsWith("a/")) {
-                        sortedArray[4] = args[j];
-                    } else if (args[j].startsWith("t/")) {
-                        sortedArray[tagIndex++] = args[j];
+                sortedArray[0] = args[i];
+                for (int j = 0; j < prefixArguments.length; j++) {
+                    String prefix = prefixArguments[j].substring(prefixArguments[j].length()-1);
+                    switch (prefix) {
+                    case ("n"):
+                        sortedArray[1] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("p"):
+                        sortedArray[2] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("e"):
+                        sortedArray[3] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("a"):
+                        sortedArray[4] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("t"):
+                        sortedArray[tagIndex++] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    default:
                     }
                 }
                 sortedInput = combine(sortedArray, " ");
@@ -105,21 +114,25 @@ public class Processor {
 
             // "COMMAND_WORD + INDEX + PREFIX + DATA" argument pattern
             case EditCommand.COMMAND_WORD:
+                userInput.replace(args[i], "");
+                prefixArguments = userInput.split("/", 0);
                 tagIndex = 6;
-
-                for (int j = 0; j < args.length; j++) {
-                    if (isInteger(args[j])) {
-                        sortedArray[1] = args[j];
-                    } else if (args[j].startsWith("n/")) {
-                        sortedArray[2] = args[j];
-                    } else if (args[j].startsWith("p/")) {
-                        sortedArray[3] = args[j];
-                    } else if (args[j].startsWith("e/")) {
-                        sortedArray[4] = args[j];
-                    } else if (args[j].startsWith("a/")) {
-                        sortedArray[5] = args[j];
-                    } else if (args[j].startsWith("t/")) {
-                        sortedArray[tagIndex++] = args[j];
+                sortedArray[0] = args[i];
+                sortedArray[1] = targetIndex;
+                for (int j = 0; j < prefixArguments.length; j++) {
+                    String prefix = prefixArguments[j].substring(prefixArguments[j].length()-1);
+                    switch (prefix) {
+                    case ("n"):
+                        sortedArray[2] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("p"):
+                        sortedArray[3] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("e"):
+                        sortedArray[4] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("a"):
+                        sortedArray[5] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    case ("t"):
+                        sortedArray[tagIndex++] = prefixArguments[j+1].substring(0, prefixArguments[j+1].length() - 2);
+                    default:
                     }
                 }
                 sortedInput = combine(sortedArray, " ");
@@ -129,13 +142,7 @@ public class Processor {
             case SelectCommand.COMMAND_WORD:
             case DeleteCommand.COMMAND_WORD:
                 sortedArray[0] = args[i];
-                int intIndex = 1;
-
-                for (int j = 0; j < args.length; j++) {
-                    if (isInteger(args[j])) {
-                        sortedArray[intIndex++] = args[j];
-                    }
-                }
+                sortedArray[1] = targetIndex;
                 sortedInput = combine(sortedArray, " ");
                 return sortedInput;
 
