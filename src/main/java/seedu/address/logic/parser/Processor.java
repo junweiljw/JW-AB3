@@ -147,7 +147,7 @@ public class Processor {
                 sortedArray[0] = args[i];
                 sortedArray[1] = targetIndex;
                 for (int j = 0; j < (prefixArguments.length - 1); j++) {
-                    String prefix = prefixArguments[j].substring(prefixArguments[j].length()-1);
+                    String prefix = prefixArguments[j].substring(prefixArguments[j].length() - 1);
                     if (j == (prefixArguments.length - 2)) {
                         argument = prefixArguments[j + 1];
                     } else {
